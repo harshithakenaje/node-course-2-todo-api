@@ -8,36 +8,36 @@ var {Todo} = require('./models/todos');
 
 var app = express();
 var port =  process.env.PORT || 3000;
-// app.use(bodyParser.json());
-// app.post('/todos',(req,res)=>{
-//      var todo = new Todo({
-//          text: req.body.text
-//      });
-//     todo.save().then((doc)=>{
-//         res.send(doc);
-//     },(err)=>{
-//         res.status(400).send(err);
-//     });
-// });
+app.use(bodyParser.json());
+app.post('/todos',(req,res)=>{
+     var todo = new Todo({
+         text: req.body.text
+     });
+    todo.save().then((doc)=>{
+        res.send(doc);
+    },(err)=>{
+        res.status(400).send(err);
+    });
+});
 
-// app.use(bodyParser.json());
-// app.post('/todos',(req,res)=>{
-//     var todo= new Todo({
-//         text: req.body.text
-//     });
-//     todo.save().then((rec)=>{
-//         res.send(rec);
-//     },(e)=>{
-//         res.send(e);
-//     });
-// })
-// app.get('/todos',(req,res)=>{
-//     Todo.find().then((todos)=>{
-//         res.send({todos});
-//     },(err)=>{
-//         res.status(400).send(err);
-//     })
-// })
+app.use(bodyParser.json());
+app.post('/todos',(req,res)=>{
+    var todo= new Todo({
+        text: req.body.text
+    });
+    todo.save().then((rec)=>{
+        res.send(rec);
+    },(e)=>{
+        res.send(e);
+    });
+})
+app.get('/todos',(req,res)=>{
+    Todo.find().then((todos)=>{
+        res.send({todos});
+    },(err)=>{
+        res.status(400).send(err);
+    })
+})
 
 app.delete('/todos/:id',(req,res)=>{
     var id= req.params.id;
