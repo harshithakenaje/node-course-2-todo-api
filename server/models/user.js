@@ -12,9 +12,9 @@ var UserSchema = new mongoose.Schema({
         minlength: 1,
         unique: true,
         validate: {
-            validator: validator.isEmail,
-            message: '{VALUE} is not a valid email'
-        }
+      validator: validator.isEmail,
+      message: '{VALUE} is not a valid email'
+    }
     },
     password: {
         type: String,
