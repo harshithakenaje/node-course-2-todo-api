@@ -3,28 +3,69 @@
 	<head>
 		<meta charset= 'UTF-8'/>
         <title>Todo app</title>
-				<link rel="stylesheet" href="/css/index.css"></link>
+				<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+				<!--<link rel="stylesheet" href="/css/index.css"></link>-->
 
 	</head>
 	<body>
-<!--<a href="#" data-toggle="modal" data-target="#login-modal">Login</a>-->
-
-<!--<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">-->
-    	  <div class="modal-dialog">
-				<div class="loginmodal-container">
-					<h1>Login to Your Account</h1><br>
-				  <form action = "/libs/index.js">
-					<input type="text" name="user" placeholder="Username">
-					<input type="password" name="pass" placeholder="Password">
-					<input type="submit" name="login" class="login loginmodal-submit" value="Login">
-				  </form>
-					
-				  <div class="login-help">
-					<a href="#">Register</a> - <a href="#">Forgot Password</a>
-				  </div>
-				</div>
-			</div>
-		  <!--</div>-->
+		<div class="container">
+      <div id="login" style="display: block">
+        <form id= "login-form">
+  	        <div class= "form-group">
+    	          <label for= "exampleInputEmail1">Email address</label>
+    	            <input type= "email" class= "form-control" id= "user-email" aria-describedby= "emailHelp" placeholder="Enter email">
+    	              <small id= "emailHelp" class= "form-text text-muted">We'll never share your email with anyone else.</small>
+          	</div>
+            <div class="form-group">
+      	        <label for= "exampleInputPassword1">Password</label>
+    	          <input type= "password" class= "form-control" id= "password" placeholder= "Password">
+  	        </div>  
+						<button type="submit" class="btn btn-info" id="signinto">Signin</button>
+						<p>New member?</p>
+						<button type="submit" class="btn btn-info" id="register">Register</button>      
+     
+     </form>
+	  </div>
+	<div id="signup" style="display: none">
+		<h2>Sign Up</h2>
+        <form id= "signup-form">
+  	        <div class= "form-group">
+    	          <label for= "exampleInputEmail2">Email address</label>
+    	            <input type= "email" class= "form-control" id= "user-email2" aria-describedby= "emailHelp" placeholder="Enter email">
+    	              <small id= "emailHelp2" class= "form-text text-muted">We'll never share your email with anyone else.</small>
+          	</div>
+            <div class="form-group">
+      	        <label for= "exampleInputPassword2">Password</label>
+    	          <input type= "password" class= "form-control" id= "password2" placeholder= "Password">
+  	        </div> 
+            <button type="submit" class="btn btn-info" id="to-signup">Signup and login</button>      
+	  </div>
+	</div>
+  <!--<div class="signin">
+    <p><i>New user??</i></p>
+    <button type="button" class="btn btn-primary" id="signIn">Sign in</button>
+  </div>-->
+  <!--<button type= "submit" class= "btn btn-primary">Submit</button>-->
+</form>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+<script src="./js/libs/jquery-3.2.1.min.js"></script>
+<script src='./js/index.js'></script>
+<script>
+	$(document).ready(function(){
+		$("#to-signup").click(function(e){
+			// e.preventDefault();
+		$("#signup").hide;
+    $("#login").show;
+		});
+		$("#register").click(function(e){
+			e.preventDefault();
+		$("#login").css({"display": "none"});
+    $("#signup").css({'display': "block"});
+	});
+	});
+</script>
 	</body>
 	
 </html>
