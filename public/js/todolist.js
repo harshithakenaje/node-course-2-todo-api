@@ -110,7 +110,7 @@ function addTodo(){
                 jQuery("span.badge badge-light").text(count);
                 // .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>')) ;
                 // jQuery("#addBtn").val("");
-                
+                 
             }
         });
     }

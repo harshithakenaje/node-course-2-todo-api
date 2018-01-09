@@ -47,7 +47,7 @@ $('#login-form').on('submit',function(event){
             }
         });
      }else{
-         alert('Password should be of minimum 6 characters');
+         alert('Wrong password');
      }
  }else{
      alert('Email adress is not valid');
