@@ -255,7 +255,7 @@ $(document).on('click',".btn.btn-outline-success.btn-sm",function(){
                             $.ajax({
                                type:"PATCH",
                                  url: "/todos/"+id,
-                                 data: JSON.stringify({"text":newText,"completed":false}),
+                                 data: JSON.stringify({"text":newText,"completed":true}),
                                  contentType: "application/json; charset=utf-8",
                                  dataType: "json",
                                  beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
