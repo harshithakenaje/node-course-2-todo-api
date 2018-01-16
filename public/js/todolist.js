@@ -2,8 +2,8 @@ var incomplete=0;
     var completed=0;
    
 $(document).ready(function(){
-    
     getAllTodos();
+    //   event.preventDefault();
 // $("#addBtn").keypress(function(e){
 //     console.log("Render to screen");
 //     var key = e.which;
@@ -22,8 +22,9 @@ $.ajaxSetup({
     }
         
 });
-$("#submitBtn").on('click',function(){
+$("#submitBtn").on('click',function(event){
     addTodo();
+     
 });
 // $("addBtn").on('click',function(){
 //     addTodo();
@@ -42,41 +43,48 @@ $("#logOut").on('click',function(){
 });
 
 $("#search-submit").on('click',function(event){
-    // event.preventDefault();
+    event.preventDefault();
     searchTodo();
     // event.stopPropagation();
     
 });
-$("#searchBtn").on('keypress',function(event){
-    // event.preventDefault();
+$("#searchBtn").keypress(function(event){
+     
     //  event.stopPropagation();
-    var key= event.keyCode;
-    // event.preventDefault();
-    if(key === 13){
+    var keys= event.which;
+   
+    if(keys== 13){
+        
        searchTodo();
+       event.stopPropagation();
+       event.preventDefault();
     }
-    
+    // event.stopPropagation();
+    // event.preventDefault();
 })
 $('#resetBtn').on('click',function(event){
+    event.preventDefault();
     jQuery("#todoList").empty();
     completed=0;
     incomplete=0;
     getAllTodos();
 })
  function searchTodo(){
-     if((jQuery("#searchBtn").val()==="")|| !jQuery("#searchBtn").val().trim()){
+     console.log('inside serch');
+     var text=jQuery("#searchBtn").val().trim();
+     if((jQuery("#searchBtn").val()==="")|| !text){
         alert('Text is required!!!!');
     }else{
-        // console.log('Control is inside');
+        console.log('Control is inside');
     $.ajax({
         type: "POST",
         url: "/todos/search",
-        data: JSON.stringify({text:jQuery("#searchBtn").val().trim()}),
+        data: JSON.stringify({text:text}),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
         success: function(todos){
-                console.log(todos);
+                console.log('todos',todos);
                 jQuery("#todoList").empty();
                  jQuery("#searchBtn").val("");
                  todos.forEach(function(todo){
@@ -91,6 +99,7 @@ $('#resetBtn').on('click',function(event){
 
 
 function getAllTodos(){
+    console.log('Getting all todos');
     createReq("GET","/todos")
     .done(function(todos){
         todos.todos.forEach(function(todo){
@@ -148,7 +157,7 @@ createReq("GET","/todos")
 });
 
 $(document).on('click',".btn.btn-outline-danger.btn-sm", function(event){
-    // event.stopPropogation();
+    event.stopPropogation();
     console.log('Delete enterd');
     // var text= $(this).parent().attr('text');
     $(this).parent().children().each(function(child){
@@ -185,7 +194,8 @@ $(document).on('click',".btn.btn-outline-danger.btn-sm", function(event){
     
 });
 
-$(document).on('click',".btn.btn-outline-success.btn-sm",function(){
+$(document).on('click',".btn.btn-outline-success.btn-sm",function(event){
+    event.stopPropagation();
     var enterPress=false;
     $(this).parent().children().each(function(child){
         if(this.tagName==="SPAN"){
@@ -197,7 +207,10 @@ $(document).on('click',".btn.btn-outline-success.btn-sm",function(){
     $(this).parent().append(jQuery('<input autofocus></input>').addClass('input').val(text));
     $('.input').on('focus',function(e){
         $(this).keypress(function(event){
+            event.preventDefault();
+            event.stopPropagation();
             var key=event.keyCode;
+            // console.log(key);
             if(key == 13){
                 enterPress=true;
                 newText=$(this).val(); 
