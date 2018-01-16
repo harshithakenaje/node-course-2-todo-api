@@ -1,4 +1,8 @@
+var incomplete=0;
+    var completed=0;
+   
 $(document).ready(function(){
+    
     getAllTodos();
 // $("#addBtn").keypress(function(e){
 //     console.log("Render to screen");
@@ -7,11 +11,25 @@ $(document).ready(function(){
 //         addTodo();
 //     }
 // });
-
+$.ajaxSetup({
+    error : function(jqXHR, textStatus) {
+        if(jqXHR.status == 404){
+            alert('Element not found');
+        }
+        else if(jqXHR.status === 400){
+            // alert('Password and email doesnt exists');
+        }
+    }
+        
+});
 $("#submitBtn").on('click',function(){
     addTodo();
 });
+// $("addBtn").on('click',function(){
+//     addTodo();
+// });
 $("#logOut").on('click',function(){
+    $("#logOut").text("Loging Out");
     $.ajax({
         type: "GET",
         url: "/user/logout",
@@ -25,8 +43,19 @@ $("#logOut").on('click',function(){
 
 $("#search-submit").on('click',function(event){
     event.preventDefault();
+    searchTodo();
     // event.stopPropagation();
-    if((jQuery("#searchBtn").val()==="")|| !jQuery("#searchBtn").val().trim()){
+    
+});
+$("#searchBtn").keypress(function(event){
+    // event.preventDefault();
+    var key= event.keyCode;
+    if(key === 13){
+       searchTodo();
+    }
+})
+ function searchTodo(){
+     if((jQuery("#searchBtn").val()==="")|| !jQuery("#searchBtn").val().trim()){
         alert('Text is required!!!!');
     }else{
     $.ajax({
@@ -37,10 +66,10 @@ $("#search-submit").on('click',function(event){
         dataType: "json",
         beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
         success: function(todos){
-            jQuery("#todoList").empty();
-            jQuery("#searchBtn").val("");
-            console.log('Here comes',todos);
-            // todos.forEach(function(todo){
+                jQuery("#todoList").empty();
+                 jQuery("#searchBtn").val("");
+                 // console.log('Here comes',todos);
+                 // todos.forEach(function(todo){
                 console.log(todos);
                 jQuery("#todoList")
                 .append(jQuery('<li class="list-group-item">Match found</li>'))
@@ -50,30 +79,221 @@ $("#search-submit").on('click',function(event){
                 .append(jQuery('<br/><li>Creator-id:</li>')
                 .append(jQuery('<span></span>').text(todos._creator))));
             // });
-
+            
         }
     })
     }
     
-})
-
+ }
 });
 
 
 function getAllTodos(){
-    var count=0;
     createReq("GET","/todos")
     .done(function(todos){
         todos.todos.forEach(function(todo){
-            count++;
-            jQuery("#todoList")
-            .append(jQuery('<li class="list-group-item list-group-item-success">')
-            .append(jQuery('<span></span>').text(todo.text)));
-            jQuery("span.badge badge-light").text(count);
+            displayTodo(todo.text,todo.completed);
+            // console.log(todo.completed);
+            if(todo.completed){
+                completed++;
+            }else{
+                incomplete++;
+            }
             
         });
+        
+           jQuery('.badge.badge-light').text(completed);
+             jQuery('.badge.badge-danger').text(incomplete);
         console.log(todos);
     });
+}
+
+$("#completedBtn").on('click',function(){
+createReq("GET","/todos")
+.done(function(todos){
+    jQuery("#todoList").empty();
+    todos.todos.forEach(function(todo){
+        if(todo.completed){
+            displayTodo(todo.text,todo.completed);
+        }
+
+        // if(todo.completed){
+        //  jQuery("#todoList")
+        //     .append(jQuery('<li class="list-group-item list-group-item-success">')
+        //     .append(jQuery('<span></span>').text(todo.text))
+        //     .append(jQuery('<span class="indent"></span><button type="button" class="btn btn-outline-danger">Delete</button>'))
+        //     .append(jQuery('<button type="button" class="btn btn-outline-info">Edit</button>')));
+        // }
+    });
+});
+
+});
+
+$("#notCompletedBtn").on('click',function(){
+createReq("GET","/todos")
+.done(function(todos){
+    console.log(todos);
+    jQuery("#todoList").empty();
+    todos.todos.forEach(function(todo){
+        if(!todo.completed){
+             displayTodo(todo.text,todo.completed);
+        }
+        // displayTodo(todo.text,todo.completed);
+        // if(!todo.completed)
+    });
+});
+
+});
+
+$(document).on('click',".btn.btn-outline-danger.btn-sm", function(event){
+    // event.stopPropogation();
+    console.log('Delete enterd');
+    // var text= $(this).parent().attr('text');
+    $(this).parent().children().each(function(child){
+            if(this.tagName === "SPAN"){//text is inside the span tag
+            text = this.innerText;
+             return false;
+             }
+});
+    console.log('Simple',text);
+    findId(text)
+    .done(function(id){
+        console.log(id);
+        $.ajax({
+        type: "DELETE",
+        url: "/todos/"+id,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
+        success: function(todo){
+            if(todo.completed==true){
+                completed--;
+                 jQuery('.badge.badge-light').text(completed);
+            }else{
+                incomplete--;
+                jQuery('.badge.badge-danger').text(incomplete);
+            }
+        }
+    });
+    jQuery("#todoList").empty();
+    getAllTodos();
+    }).catch((e)=>{
+        // console.log(e);
+    })
+    
+});
+
+$(document).on('click',".btn.btn-outline-success.btn-sm",function(){
+    var enterPress=false;
+    $(this).parent().children().each(function(child){
+        if(this.tagName==="SPAN"){
+            text=this.innerText;
+            this.innerText="";
+            return false;
+        }
+    });
+    $(this).parent().append(jQuery('<input autofocus></input>').addClass('input').val(text));
+    $('.input').on('focus',function(e){
+        $(this).keypress(function(event){
+            var key=event.keyCode;
+            if(key == 13){
+                enterPress=true;
+                newText=$(this).val(); 
+                //  $(this).parent().children().remove("#input");
+                // console.log(newText);
+                    $(this).hide();
+                if(newText.trim()){
+                   $(this).parent().children().each(function(child){
+                    if(this.tagName==="SPAN"){
+                    this.innerText=newText;
+                    console.log(this.innerText);
+                     return false;
+                  }
+                }); 
+                findId(text)
+                .done(function(id){
+                    console.log(id,newText)
+                    $.ajax({
+                         type:"PATCH",
+                        url: "/todos/"+id,
+                        data: JSON.stringify({"text":newText,"completed":false}),
+                         contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                         beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))}
+                    })
+                    .fail(function(e){
+                        alert(e);
+                    })
+                })
+              }else{
+                  alert('Cannot edit with empty string');
+                  $(this).parent().children().each(function(child){
+                    if(this.tagName==="SPAN"){
+                    this.innerText=text;
+                     return false;
+                  }
+                }); 
+              }
+            }
+         })
+        .promise().done(function(){
+            $(this).on('focusout',function(e){
+                if(!enterPress){
+                    e.stopPropagation();
+                    var newText=$(this).val();
+                    $(this).hide();
+                    if(newText.trim()){
+                        $(this).parent().children().each(function(child){
+                        if(this.tagName==="SPAN"){
+                        this.innerText=newText;
+                    //  console.log(this.innerText);
+                        return false;
+                         }
+                        }); 
+                        findId(text)
+                        .done(function(id){
+                            $.ajax({
+                               type:"PATCH",
+                                 url: "/todos/"+id,
+                                 data: JSON.stringify({"text":newText,"completed":false}),
+                                 contentType: "application/json; charset=utf-8",
+                                 dataType: "json",
+                                 beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
+                            })  
+                        .fail(function(e){
+                        alert(e);
+                         })
+                        })
+                        
+                    }else{
+                        alert('Cannot edit with empty string');
+                         $(this).parent().children().each(function(child){
+                        if(this.tagName==="SPAN"){
+                        this.innerText=text;
+                         return false;
+                        }
+                        }); 
+                    }
+                }
+            });
+                
+        });
+           
+    });
+});
+
+
+
+function findId(text){
+  return  $.ajax({
+        type: "POST",
+        url: "/todos/findId",
+        data: JSON.stringify({text}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))}
+    
+});
 }
 
 function createReq(type,url){
@@ -103,15 +323,28 @@ function addTodo(){
             dataType: "json",
             beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
             success: function(todo){
-                jQuery("#todoList")
-                .append(jQuery('<li class="list-group-item list-group-item-success">')
-                .append(jQuery('<span></span>').text(todo.text)));
-                count++;
-                jQuery("span.badge badge-light").text(count);
-                // .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>')) ;
-                // jQuery("#addBtn").val("");
+                displayTodo(todo.text,todo.completed);
                  
             }
         });
+    }
+}
+
+function displayTodo(text,completed){
+    if(completed ===true){
+            jQuery("#todoList")
+            .append(jQuery('<li class="list-group-item list-group-item-success"></li>')
+            .append(jQuery('<i class="fa fa-check" aria-hidden="true"></i>'))
+            .append(jQuery('<span ></span>').text(text))                 
+            .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm" id="deleteBtn">').append(' <i class="fa fa-trash-o" aria-hidden="true"></i>'))
+            .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm" id="editBtn">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
+
+    }else{
+        jQuery("#todoList")
+            .append(jQuery('<li class="list-group-item list-group-item-danger">')
+            .append(jQuery('<span ></span>').text(text))                    
+            .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm" id="deleteBtn">').append(' <i class="fa fa-trash-o" aria-hidden="true"></i>'))
+            .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm" id="editBtn">').append('<i class="fa fa-pencil" aria-hidden="true"></i>')));
+
     }
 }

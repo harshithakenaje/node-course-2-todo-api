@@ -1,4 +1,12 @@
 // $("input[name=nameGoesHere]").val();
+$.ajaxSetup({
+    error : function(jqXHR, textStatus) {
+        if(jqXHR.status == 400){
+            alert('Password and email doesnt match');
+        }
+    }
+        
+});
 
 $('#signup-form').on('submit',function(event){
     event.preventDefault();

@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>todo list
-       
-    </title>
+        </title>
     <link rel="stylesheet" type="text/css" href="./css/todolist.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <!--<style>span.indent{ padding-right: 58em }</style>-->
+     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 </head>
 <body>
 <h1>Todos</h1>
@@ -23,9 +24,13 @@
       <li class="nav-item">
         <a class="nav-link" href="#">Link</a>
       </li>-->
-        <!--<button type="button" class="btn btn-primary" id="countBtn">
-            My total todos <span class="badge badge-light"></span>
-        </button>-->
+        <button type="button" class="btn btn-primary" id="completedBtn" padding-right="30em">
+           Completed <span class="badge badge-light"></span>
+        </button>
+        <pre>   </pre><button type="button" class="btn btn-warning" id="notCompletedBtn">
+            Incompleted <span class="badge badge-danger"></span>
+        </button>
+        <pre>   </pre>
       <!--<li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Dropdown
@@ -42,13 +47,17 @@
       </li>-->
       <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="text" placeholder="search" aria-label="searchTodo" id="searchBtn">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search-submit">Search</button>
+      <!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search-submit">Search</button>-->
+ <button type="button" class="btn btn-default" id="search-submit">
+          <span class="glyphicon glyphicon-search"></span> Search
+        </button>
     </form>
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="text" placeholder="add" aria-label="addTodo" id="addBtn">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="submitBtn">Add</button>
     </form>
+    <pre>   </pre>
     <button type="button" class="btn btn-primary" id="logOut">Logout</button>
   </div>
 </nav>

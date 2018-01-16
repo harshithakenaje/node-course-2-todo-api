@@ -80,30 +80,24 @@ app.post('/todos/search',authenticate,(req,res)=>{
   });
 });
 
-// app.post('/todos/search', authenticate, (req, res)=>{
-//      var text = req.body.text;
-//      var todosText =[];
-//      if(text === " "){
-//       return res.status(404).send();
-//     }
-//     Todo.find({"text": new RegExp(text, 'i'), _creator:req.user._id}).then((todos)=>{
-//         if(!todos.length){
-//           return res.status(404).send();
-//         }
-        
-//         todos.forEach((todo)=>{
-//           // todosText.push(todo.text);
-//           todoSubObj={}
-//           todoSubObj.text = todo.text;
-//           todoSubObj.completed = todo.completed;
-//           todosText.push(todoSubObj);
-//         })
-//         res.send(todosText);
-//     }).catch((e)=>{
-//       res.status(404).send();
-// })
+app.post('/todos/findId',authenticate,(req,res)=>{
+  var text=req.body.text;
+  if(text===""){
+    return res.status(404).send();
+  }
+  Todo.findOne({
+    text,
+    _creator: req.user._id
+}).then((todo)=>{
+  if(!todo){
+    return res.status(404).send();
+  }
+  res.send(todo._id);
+}).catch((e)=>{
+  res.status(400).send();
+});
+  })
   
-// });
 
 app.delete('/todos/:id',authenticate,(req, res) => {
   var id = req.params.id;
@@ -133,7 +127,7 @@ app.patch('/todos/:id',authenticate, (req, res) => {
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
-
+// console.log(body.text);
   if (_.isBoolean(body.completed) && body.completed) {
     body.completedAt = new Date().getTime();
   } else {
