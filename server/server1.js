@@ -65,16 +65,24 @@ app.get('/todos/:id',authenticate, (req, res) => {
 });
 
 app.post('/todos/search',authenticate,(req,res)=>{
-  // var text = req.body.text;
-  // console.log(text);
-  Todo.findOne({
-    text:req.body.text,
+  var text = req.body.text;
+  searchTodo=[];
+  console.log(text);
+  Todo.find({
+    "text": new RegExp(text,'i'),
     _creator: req.user._id
-  }).then((todo)=>{
-    if(!todo){
+  }).then((todos)=>{
+    if(!todos){
       return res.status(404).send();
     }
-    res.send(todo);
+    todos.forEach((todo)=>{
+      searchRes={};
+      searchRes.text=todo.text;
+      searchRes.completed=todo.completed;
+      searchTodo.push(searchRes);
+    });
+    console.log(searchTodo);
+    res.send(searchTodo);
   }).catch((e)=>{
     res.status(400).send();
   });

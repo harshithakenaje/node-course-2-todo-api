@@ -35,53 +35,55 @@ $("#logOut").on('click',function(){
         url: "/user/logout",
         beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
         success: function(data){
-            window.localStorage.clear();
+            // window.localStorage.clear();
             window.location.href="index.html";
         }
     })
 });
 
 $("#search-submit").on('click',function(event){
-    event.preventDefault();
+    // event.preventDefault();
     searchTodo();
     // event.stopPropagation();
     
 });
-$("#searchBtn").keypress(function(event){
+$("#searchBtn").on('keypress',function(event){
     // event.preventDefault();
+    //  event.stopPropagation();
     var key= event.keyCode;
+    // event.preventDefault();
     if(key === 13){
        searchTodo();
     }
+    
+})
+$('#resetBtn').on('click',function(event){
+    jQuery("#todoList").empty();
+    completed=0;
+    incomplete=0;
+    getAllTodos();
 })
  function searchTodo(){
      if((jQuery("#searchBtn").val()==="")|| !jQuery("#searchBtn").val().trim()){
         alert('Text is required!!!!');
     }else{
+        // console.log('Control is inside');
     $.ajax({
         type: "POST",
         url: "/todos/search",
-        data: JSON.stringify({text:$("#searchBtn").val().trim()}),
+        data: JSON.stringify({text:jQuery("#searchBtn").val().trim()}),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         beforeSend:function(xhr){xhr.setRequestHeader('x-auth',window.localStorage.getItem('token'))},
         success: function(todos){
+                console.log(todos);
                 jQuery("#todoList").empty();
                  jQuery("#searchBtn").val("");
-                 // console.log('Here comes',todos);
-                 // todos.forEach(function(todo){
-                console.log(todos);
-                jQuery("#todoList")
-                .append(jQuery('<li class="list-group-item">Match found</li>'))
-                .append(jQuery('<li class="list-group-item list-group-item-primary">')
-                // .append(jQuery('<li class="list-group-item list-group-item-success">')
-                .append(jQuery('<span></span>').text(todos.text))
-                .append(jQuery('<br/><li>Creator-id:</li>')
-                .append(jQuery('<span></span>').text(todos._creator))));
-            // });
-            
-        }
-    })
+                 todos.forEach(function(todo){
+                     displayTodo(todo.text,todo.completed);
+                 })
+                }
+        })
     }
     
  }
